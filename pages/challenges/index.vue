@@ -1,12 +1,13 @@
 <template>
   <header class="flex items-center gap-10 justify-between">
-    <h2 class="text-3xl font-bold">Minhas Metas</h2>
-    <button
-      class="py-3 bg-blue-600 rounded-xl px-6 text-white text-sm flex items-center"
-    >
-      <Icon name="heroicons:plus" size="22"></Icon>
-      Adicionar Nova Meta
-    </button>
+    <h2 class="text-3xl font-bold flex-2/3">Minhas Metas</h2>
+    <NuxtLink to="/challenges/new" class="flex-1">
+      <Button
+        text="Criar Nova Meta"
+        icon-name="heroicons:plus"
+        variant="primary"
+      />
+    </NuxtLink>
   </header>
   <p class="text-gray-700 mt-4">Acompanhe e gerencie suas metas financeiras</p>
 
@@ -20,12 +21,14 @@
       </div>
 
       <div class="actions flex justify-end gap-6">
-        <button
-          class="flex-1 bg-blue-600 rounded-xl text-white text-sm py-3 flex items-center justify-center"
-        >
-          <Icon name="heroicons:plus" size="22"></Icon>
-          Novo aporte
-        </button>
+        <Button
+          text="Novo aporte"
+          icon-name="heroicons:plus"
+          background="bg-green-400"
+          textColor="text-white"
+          variant="primary"
+          @click="handleNewAporte()"
+        />
         <NuxtLink to="/challenges/1" class="flex items-center text-sm">
           <button class="cursor-pointer flex items-center text-sm">
             <Icon
@@ -55,4 +58,8 @@
 // const { data } = await useFetch("https://jsonplaceholder.typicode.com/posts/");
 
 // console.log(data.value);
+
+const handleNewAporte = () => {
+  console.log("Novo aporte");
+};
 </script>

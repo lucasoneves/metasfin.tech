@@ -1,0 +1,52 @@
+<template>
+  <button
+    @click="handleClick"
+    :class="`flex-1 rounded-xl ${buttonClasses} cursor-pointer text-sm py-3 w-full flex items-center justify-center`"
+  >
+    <Icon v-if="iconName" :name="iconName" :size="iconSize"></Icon>
+    {{ text }}
+  </button>
+</template>
+
+<script lang="ts" setup>
+const props = defineProps({
+  text: String,
+  iconName: String,
+  theme: String,
+  variant: {
+    type: String,
+    default: "primary",
+  },
+  iconSize: {
+    type: Number,
+    default: 20,
+  },
+});
+const emit = defineEmits(["click"]);
+const handleClick = () => {
+  emit("click");
+};
+
+const buttonClasses = computed(() => {
+  const classes: string[] = [];
+
+  switch (props.variant) {
+    case "primary":
+      classes.push("bg-blue-600 hover:bg-blue-700 text-white");
+      break;
+    case "secondary":
+      classes.push("bg-gray-200 hover:bg-gray-300 text-gray-800");
+      break;
+    case "danger":
+      classes.push("bg-red-600 hover:bg-red-800 text-white");
+      break;
+    case "outline":
+      classes.push("border border-blue-600 text-blue-600 hover:bg-blue-50");
+      break;
+  }
+
+  return classes.join(" ");
+});
+</script>
+
+<style></style>
