@@ -19,14 +19,12 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-  modules: [
-    [
-      "@nuxtjs/google-fonts",
-      {
-        families: {
-          Inter: [400, 700],
-        },
+  modules: [[
+    "@nuxtjs/google-fonts",
+    {
+      families: {
+        Inter: [400, 700],
       },
-    ],
-  ],
+    },
+  ], "@nuxt/icon"],
 });
