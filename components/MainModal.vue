@@ -5,12 +5,21 @@
     v-if="active"
     class="modal-wrapper bg-gray-950/75 z-10 fixed h-full top-0 left-0 right-0 w-full m-auto bottom-0 flex justify-center items-center"
   >
-    <div class="modal-content w-full max-w-2xl bg-white p-4 rounded-lg">
+    <div class="modal-content w-full mx-8 max-w-2xl bg-white p-6 rounded-lg">
       <h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
-      <p>{{ content }}</p>
-      <div v-if="cancelText || confirmText" class="actions mt-10">
-        <button v-if="cancelText">{{ cancelText }}</button>
-        <button v-if="confirmText" type="submit">{{ confirmText }}</button>
+      <p class="text-gray-700 text-sm mb-4">{{ content }}</p>
+      <slot></slot>
+      <div
+        v-if="cancelText || confirmText"
+        class="actions max-w-6/12 ml-auto flex gap-4 mt-10"
+      >
+        <Button :text="cancelText" @click="emits('close')" class="flex-1" />
+        <Button
+          :text="confirmText"
+          variant="success"
+          @click="emits('save')"
+          class="flex-1"
+        />
       </div>
     </div>
   </div>
@@ -25,12 +34,13 @@ defineProps({
   cancelText: String,
 });
 
-const emit = defineEmits(["close"]);
+const emits = defineEmits(["close", "save"]);
+
 const modalWrapper = ref<HTMLElement | null>(null);
 
 const handleClick = (event: MouseEvent) => {
   if (event.target === modalWrapper.value) {
-    emit("close");
+    emits("close");
   }
 };
 </script>

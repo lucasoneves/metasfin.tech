@@ -40,6 +40,10 @@ const buttonClasses = computed(() => {
       classes.push("bg-gray-200 hover:bg-gray-300 text-gray-800");
       break;
 
+    case "success":
+      classes.push("bg-green-600 hover:bg-green-700 text-white");
+      break;
+
     case "outline-secondary":
       classes.push("border border-blue-600 text-blue-600 hover:bg-blue-50");
       break;
