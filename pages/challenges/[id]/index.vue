@@ -1,5 +1,8 @@
 <template>
-  <h2 class="text-3xl font-bold">Detalhe do challenge: {{ challengeId }}</h2>
+  <PageTitle :content="`Detalhe do challenge: ${challengeId}`" />
+  <PageDescription
+    content="Visualize e edite os detalhes da sua meta financeira. Acompanhe seu progresso e faça os ajustes necessários."
+  />
 </template>
 <script setup lang="ts">
 const route = useRoute();

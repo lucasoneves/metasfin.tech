@@ -1,5 +1,8 @@
 <template>
-  <NuxtLink to="/challenges/1" :class="`flex items-center text-sm w-full`">
+  <NuxtLink
+    :to="`/challenges/${path}`"
+    :class="`flex items-center text-sm w-full`"
+  >
     <slot></slot>
     {{ text }}
   </NuxtLink>
