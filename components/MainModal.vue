@@ -16,7 +16,7 @@
         <Button :text="cancelText" @click="emits('close')" class="flex-1" />
         <Button
           :text="confirmText"
-          variant="success"
+          :variant="actionType === 'delete' ? 'danger' : 'primary'"
           @click="emits('save')"
           class="flex-1"
         />
@@ -32,6 +32,10 @@ defineProps({
   content: String,
   confirmText: String,
   cancelText: String,
+  actionType: {
+    default: "primary",
+    type: String,
+  },
 });
 
 const emits = defineEmits(["close", "save"]);

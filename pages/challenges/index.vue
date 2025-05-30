@@ -15,7 +15,7 @@
     <CardChallenge
       v-for="challenge in challenges"
       :key="challenge.id"
-      :challengeId="challenge.id"
+      :challenge-id="challenge.id"
       :balance="challenge.balance"
       :goal="challenge.goal"
       :title="challenge.title"
@@ -26,15 +26,18 @@
   </section>
 
   <MainModal
+    action-type="delete"
     cancel-text="Cancelar"
-    confirm-text="Confirmar"
+    confirm-text="Excluir"
     title="Excluir Meta"
     content="Tem certeza que deseja excluir esta meta? Essa ação é irreversível"
     :active="modalDeleteActive"
     @close="modalDeleteActive = false"
+    @save="handleConfirmDelete"
   />
 
   <MainModal
+    action-type="save"
     cancel-text="Cancelar"
     confirm-text="Salvar"
     title="Novo aporte"
@@ -47,7 +50,7 @@
       <input
         type="number"
         placeholder="Valor"
-        class="py-2 px-4 rounded-lg border border-gray-400 w-full"
+        class="py-2 px-4 rounded-lg text-sm border border-gray-400 w-full"
         @change="getValueAporte"
       />
     </form>
@@ -58,13 +61,23 @@
 // const { data } = await useFetch("https://jsonplaceholder.typicode.com/posts/");
 
 // console.log(data.value);
+interface Challenge {
+  id: string;
+  balance: number;
+  goal: number;
+  title: string;
+  description: string;
+}
+
+const loading = useLoading();
 
 const modalDeleteActive = ref(false);
 const modalAddMoney = ref(false);
 const aporteValue = ref<number | null>(null);
 const challengeSelected = ref<string | null>(null);
+const challengeToDelete = ref<string | null>(null);
 
-const challenges = ref([
+const challenges = ref<Challenge[]>([
   {
     id: "1",
     balance: 0,
@@ -76,27 +89,45 @@ const challenges = ref([
   {
     id: "2",
     balance: 0,
-    goal: 10000,
+    goal: 5000,
     title: "Férias de verão",
     description:
       "Nunca é demais lembrar o peso e o significado destes problemas, uma vez que a valorização de fatores subjetivos desafia a capacidade de equalização de alternativas às soluções ortodoxas.",
   },
 ]);
 
+const openModal = () => {
+  loading.value = true;
+};
+
+const closeModal = () => {
+  loading.value = false;
+};
+
 const handleNewAporte = (challengeId: string) => {
   handleAddMoney(challengeId);
 };
 
 const handleDeleteChallenge = (challengeId: string) => {
-  console.log(`Delete challenge ${challengeId}`);
+  challengeToDelete.value = challengeId;
   modalDeleteActive.value = true;
+};
+
+const handleConfirmDelete = () => {
+  if (challengeToDelete.value) {
+    challenges.value = challenges.value.filter(
+      (challenge) => challenge.id !== challengeToDelete.value
+    );
+    console.log(`Challenge ${challengeToDelete.value} deleted`);
+  }
+  modalDeleteActive.value = false;
+  challengeToDelete.value = null;
 };
 
 const handleAddMoney = (challengeId: string) => {
   challengeSelected.value = challengeId;
   modalAddMoney.value = true;
 };
-
 const handleSaveAporte = () => {
   if (aporteValue.value !== null) {
     challenges.value = challenges.value.map((challenge) => {
@@ -111,6 +142,7 @@ const handleSaveAporte = () => {
     modalAddMoney.value = false;
     aporteValue.value = null;
   }
+  challengeSelected.value = null;
 };
 
 const getValueAporte = (e: Event) => {
