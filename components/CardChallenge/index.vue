@@ -45,7 +45,7 @@
 import { computed } from "vue";
 
 interface Props {
-  challengeId: string;
+  challengeId: number;
   title: string;
   description: string;
   balance: number;

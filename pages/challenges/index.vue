@@ -17,7 +17,7 @@
       :key="challenge.id"
       :challenge-id="challenge.id"
       :balance="challenge.balance"
-      :goal="challenge.goal"
+      :goal="challenge.value"
       :title="challenge.title"
       :description="challenge.description"
       :handleNewAporte="() => handleNewAporte(challenge.id)"
@@ -58,43 +58,35 @@
 </template>
 
 <script setup lang="ts">
-// const { data } = await useFetch("https://jsonplaceholder.typicode.com/posts/");
+const {
+  data: challenges,
+  pending,
+  error,
+} = await useFetch<Challenge[]>("http://localhost:8080/api/goals");
 
 // console.log(data.value);
 interface Challenge {
-  id: string;
-  balance: number;
-  goal: number;
+  // Campos do gorm.Model (renomeados no JSON)
+  id: number; // O ID em Go é 'uint', que é um número. No JSON será um número.
+  created_at: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
+  updated_at: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
+  deleted_at: string | null; // Pode ser null se não for soft-deletado, ou uma string
+  // Seus campos
   title: string;
   description: string;
+  value: number; // Use 'value' se a API retornar 'value', ou 'goal' se o frontend mapear
+  balance: number;
+  user_id: number; // UserID em Go é 'uint', que é um número. No JSON será um número.
 }
-
 const loading = useLoading();
 
 const modalDeleteActive = ref(false);
 const modalAddMoney = ref(false);
 const aporteValue = ref<number | null>(null);
-const challengeSelected = ref<string | null>(null);
-const challengeToDelete = ref<string | null>(null);
+const challengeSelected = ref<number | null>(null);
+const challengeToDelete = ref<number | null>(null);
 
-const challenges = ref<Challenge[]>([
-  {
-    id: "1",
-    balance: 0,
-    goal: 10000,
-    title: "Mundial de Clubes 2025",
-    description:
-      "No mundo atual, a determinação clara de objetivos maximiza as possibilidades por conta do investimento em reciclagem técnica.",
-  },
-  {
-    id: "2",
-    balance: 0,
-    goal: 5000,
-    title: "Férias de verão",
-    description:
-      "Nunca é demais lembrar o peso e o significado destes problemas, uma vez que a valorização de fatores subjetivos desafia a capacidade de equalização de alternativas às soluções ortodoxas.",
-  },
-]);
+const userChallenges = ref<Challenge[]>([]);
 
 const openModal = () => {
   loading.value = true;
@@ -104,18 +96,18 @@ const closeModal = () => {
   loading.value = false;
 };
 
-const handleNewAporte = (challengeId: string) => {
+const handleNewAporte = (challengeId: number) => {
   handleAddMoney(challengeId);
 };
 
-const handleDeleteChallenge = (challengeId: string) => {
+const handleDeleteChallenge = (challengeId: number) => {
   challengeToDelete.value = challengeId;
   modalDeleteActive.value = true;
 };
 
 const handleConfirmDelete = () => {
   if (challengeToDelete.value) {
-    challenges.value = challenges.value.filter(
+    userChallenges.value = userChallenges.value.filter(
       (challenge) => challenge.id !== challengeToDelete.value
     );
     console.log(`Challenge ${challengeToDelete.value} deleted`);
@@ -124,13 +116,13 @@ const handleConfirmDelete = () => {
   challengeToDelete.value = null;
 };
 
-const handleAddMoney = (challengeId: string) => {
+const handleAddMoney = (challengeId: number) => {
   challengeSelected.value = challengeId;
   modalAddMoney.value = true;
 };
 const handleSaveAporte = () => {
   if (aporteValue.value !== null) {
-    challenges.value = challenges.value.map((challenge) => {
+    challenges.value = userChallenges.value.map((challenge) => {
       if (
         challenge.id === challengeSelected.value &&
         aporteValue.value !== null
@@ -148,4 +140,6 @@ const handleSaveAporte = () => {
 const getValueAporte = (e: Event) => {
   aporteValue.value = parseFloat((e.target as HTMLInputElement).value);
 };
+
+console.log(challenges);
 </script>
