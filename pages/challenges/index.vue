@@ -82,6 +82,7 @@ interface Challenge {
   completed: boolean;
 }
 const loading = useLoading();
+const { showToast } = useToast();
 
 const modalDeleteActive = ref(false);
 const modalAddMoney = ref(false);
@@ -122,14 +123,15 @@ const handleConfirmDelete = async () => {
       );
 
       if (error.value) {
-        console.log("Erro ao deletar a meta:", error.value);
+        showToast("Erro ao deletar a meta", "Error");
       }
 
-      console.log("Meta deletada com sucesso!");
+      showToast("Meta deletada com sucesso!", "Success");
       await refresh();
     }
   } catch (error) {
     console.log("Erro ao deletar a meta:", error);
+    showToast("Erro ao deletar a meta", "Error");
   } finally {
     loading.value = false;
   }

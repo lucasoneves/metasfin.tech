@@ -32,6 +32,7 @@ const buttonClasses = computed(() => {
   switch (props.variant) {
     case "primary":
       classes.push("bg-blue-700 hover:bg-blue-800 text-white");
+      break;
     case "outline-primary":
       classes.push("border border-blue-600 text-blue-600 hover:bg-blue-50");
       break;

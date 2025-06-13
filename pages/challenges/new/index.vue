@@ -80,6 +80,7 @@ const handleSaveChallenge = async (e: Event) => {
   e.preventDefault(); // Prevenir o comportamento padrão do formulário primeiro
 
   const loading = useLoading(); // Assumindo que useLoading() retorna uma ref para o estado de loading global
+  const { showToast } = useToast();
   loading.value = true; // Ativar o loading ANTES da requisição
 
   try {
@@ -95,14 +96,22 @@ const handleSaveChallenge = async (e: Event) => {
     if (error.value) {
       // Tratar o erro, talvez mostrar uma notificação para o usuário
       console.error("Erro ao salvar a meta:", error.value);
+      showToast(
+        `Erro ao salvar a meta: ${
+          error.value.data?.message || error.value.statusMessage
+        }`,
+        "Error"
+      );
     } else {
       // Se não houver erro, limpar o formulário e redirecionar
       handleClearForm();
+      showToast("Meta salva com sucesso!", "Success");
       await navigateTo("/challenges"); // Redirecionar para a lista de metas
     }
   } catch (err) {
     // Capturar outros erros inesperados (ex: problemas de rede, erros no try block)
     console.error("Ocorreu um erro inesperado ao tentar salvar a meta:", err);
+    showToast("Ocorreu um erro inesperado.", "Error");
   } finally {
     loading.value = false;
   }
