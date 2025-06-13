@@ -109,14 +109,31 @@ const handleDeleteChallenge = (challengeId: number) => {
 };
 
 const handleConfirmDelete = async () => {
-  const id = challengeToDelete.value;
-  if (challengeToDelete.value) {
-    await useFetch(`http://localhost:8080/api/goals/${id}`, {
-      method: "DELETE",
-    });
-    await refresh();
-  }
+  loading.value = true;
   modalDeleteActive.value = false;
+  const id = challengeToDelete.value;
+  try {
+    if (challengeToDelete.value) {
+      const { error, pending } = await useFetch(
+        `http://localhost:8080/api/goals/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (error.value) {
+        console.log("Erro ao deletar a meta:", error.value);
+      }
+
+      console.log("Meta deletada com sucesso!");
+      await refresh();
+    }
+  } catch (error) {
+    console.log("Erro ao deletar a meta:", error);
+  } finally {
+    loading.value = false;
+  }
+
   challengeToDelete.value = null;
 };
 

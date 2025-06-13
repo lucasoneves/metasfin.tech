@@ -3,9 +3,11 @@
     ref="modalWrapper"
     @click="handleClick"
     v-if="active"
-    class="modal-wrapper bg-gray-950/75 z-10 fixed h-full top-0 left-0 right-0 w-full m-auto bottom-0 flex justify-center items-center"
+    class="modal-wrapper bg-white/75 z-10 fixed h-full top-0 left-0 right-0 w-full m-auto bottom-0 flex justify-center items-center"
   >
-    <div class="modal-content w-full mx-8 max-w-2xl bg-white p-6 rounded-lg">
+    <div
+      class="modal-content w-full mx-8 max-w-2xl bg-white shadow-lg p-6 rounded-lg"
+    >
       <h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
       <p class="text-gray-700 text-sm mb-4">{{ content }}</p>
       <slot></slot>
