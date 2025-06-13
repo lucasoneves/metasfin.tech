@@ -62,6 +62,7 @@ const {
   data: challenges,
   pending,
   error,
+  refresh, // Adicione refresh aqui
 } = await useFetch<Challenge[]>("http://localhost:8080/api/goals");
 
 // console.log(data.value);
@@ -107,12 +108,13 @@ const handleDeleteChallenge = (challengeId: number) => {
   modalDeleteActive.value = true;
 };
 
-const handleConfirmDelete = () => {
+const handleConfirmDelete = async () => {
+  const id = challengeToDelete.value;
   if (challengeToDelete.value) {
-    userChallenges.value = userChallenges.value.filter(
-      (challenge) => challenge.id !== challengeToDelete.value
-    );
-    console.log(`Challenge ${challengeToDelete.value} deleted`);
+    await useFetch(`http://localhost:8080/api/goals/${id}`, {
+      method: "DELETE",
+    });
+    await refresh();
   }
   modalDeleteActive.value = false;
   challengeToDelete.value = null;
