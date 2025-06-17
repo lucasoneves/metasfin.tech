@@ -21,6 +21,7 @@
     <div class="form-field">
       <label for="title" class="text-sm font-bold">Descrição</label>
       <textarea
+        rows="4"
         type="text"
         placeholder="Descrição"
         v-model="newChallenge.description"

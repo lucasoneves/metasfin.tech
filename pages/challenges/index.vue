@@ -46,13 +46,15 @@
     @close="modalAddMoney = false"
     @save="handleSaveAporte"
   >
-    <form action="" @submit="handleSaveAporte">
+    <form @submit.prevent="handleSaveAporte">
       <input
         type="number"
+        v-model.number="aporteValue"
         placeholder="Valor"
         class="py-2 px-4 rounded-lg text-sm border border-gray-400 w-full"
-        @change="getValueAporte"
       />
+      <button type="submit" class="hidden"></button>
+      <!-- Para permitir submit com Enter -->
     </form>
   </MainModal>
 </template>
@@ -62,7 +64,7 @@ const {
   data: challenges,
   pending,
   error,
-  refresh, // Adicione refresh aqui
+  refresh,
 } = await useFetch<Challenge[]>("http://localhost:8080/api/goals");
 
 // console.log(data.value);
@@ -142,27 +144,72 @@ const handleConfirmDelete = async () => {
 const handleAddMoney = (challengeId: number) => {
   challengeSelected.value = challengeId;
   modalAddMoney.value = true;
-};
-const handleSaveAporte = () => {
-  if (aporteValue.value !== null) {
-    challenges.value = userChallenges.value.map((challenge) => {
-      if (
-        challenge.id === challengeSelected.value &&
-        aporteValue.value !== null
-      ) {
-        challenge.balance += aporteValue.value;
-      }
-      return challenge;
-    });
-    modalAddMoney.value = false;
-    aporteValue.value = null;
-  }
-  challengeSelected.value = null;
+  console.log(challengeId);
 };
 
-const getValueAporte = (e: Event) => {
-  aporteValue.value = parseFloat((e.target as HTMLInputElement).value);
+// Remover getValueAporte, pois usaremos v-model
+// const getValueAporte = (e: Event) => {
+//   aporteValue.value = parseFloat((e.target as HTMLInputElement).value);
+// };
+
+const handleSaveAporte = async () => {
+  if (aporteValue.value === null || aporteValue.value <= 0) {
+    showToast("Por favor, insira um valor de aporte válido.", "Error");
+    return;
+  }
+
+  if (challengeSelected.value === null) {
+    showToast("Erro: Nenhuma meta selecionada para o aporte.", "Error");
+    modalAddMoney.value = false; // Fecha o modal se o estado estiver inconsistente
+    return;
+  }
+
+  loading.value = true;
+  const goalId = challengeSelected.value;
+  const amount = aporteValue.value;
+
+  try {
+    // ATENÇÃO: Verifique se este é o endpoint correto para adicionar fundos/aporte.
+    // Exemplo: POST /api/goals/{goalId}/deposit ou /api/goals/{goalId}/add-money
+    const { error: fetchError } = await useFetch(
+      `http://localhost:8080/api/goals/deposit/${goalId}`,
+
+      {
+        method: "POST",
+        body: { amount }, // A API deve esperar um corpo como { "amount": valor }
+      }
+    );
+
+    if (fetchError.value) {
+      console.error("Erro ao salvar aporte:", fetchError.value);
+      const errorMessage =
+        fetchError.value.data?.message || // Tenta pegar msg de erro da API
+        fetchError.value.message ||
+        "Erro ao salvar o aporte. Tente novamente.";
+      showToast(errorMessage, "Error");
+    } else {
+      showToast("Aporte salvo com sucesso!", "Success");
+      modalAddMoney.value = false; // Fecha o modal, o watch cuidará da limpeza
+      await refresh(); // Atualiza a lista de metas
+    }
+  } catch (err) {
+    console.error("Erro inesperado ao processar o aporte:", err);
+    showToast(
+      "Ocorreu um erro inesperado. Por favor, tente novamente.",
+      "Error"
+    );
+  } finally {
+    loading.value = false;
+  }
 };
 
 console.log(challenges);
+
+watch(modalAddMoney, (isModalActive) => {
+  if (!isModalActive) {
+    // Limpa os valores quando o modal de adicionar aporte é fechado
+    aporteValue.value = null;
+    challengeSelected.value = null;
+  }
+});
 </script>

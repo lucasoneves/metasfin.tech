@@ -1,7 +1,7 @@
 <template>
   <section
     v-if="visible"
-    class="loader-wrapper fixed top-0 bg-white/75 400 h-full w-full flex items-center justify-center left-0"
+    class="loader-wrapper z-10 fixed top-0 bg-white/75 400 h-full w-full flex items-center justify-center left-0"
   >
     <div class="loader"></div>
   </section>
