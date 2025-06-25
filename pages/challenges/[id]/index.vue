@@ -13,7 +13,7 @@
       <input
         id="title"
         type="text"
-        placeholder="Título da meta"
+        placeholder="Exemplo: Viagem de férias"
         v-model="newChallenge.title"
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />
@@ -23,7 +23,7 @@
       <textarea
         rows="4"
         type="text"
-        placeholder="Descrição"
+        placeholder="Exemplo: Viagem de férias para a praia com duração de 30 dias"
         v-model="newChallenge.description"
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />

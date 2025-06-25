@@ -9,24 +9,35 @@
     class="mt-10 flex gap-4 flex-col w-8/12"
     @submit="handleSaveChallenge"
   >
-    <input
-      type="text"
-      placeholder="Título da meta"
-      v-model="newChallenge.title"
-      class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
-    />
-    <textarea
-      type="text"
-      placeholder="Descrição"
-      v-model="newChallenge.description"
-      class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
-    />
-    <input
-      type="number"
-      placeholder="Valor da meta"
-      v-model.number="newChallenge.value"
-      class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
-    />
+    <div class="form-field">
+      <label for="title" class="text-sm font-bold">Título da meta</label>
+      <input
+        id="title"
+        type="text"
+        placeholder="Exemplo: Viagem de férias"
+        v-model="newChallenge.title"
+        class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+      />
+    </div>
+    <div class="form-field">
+      <label for="title" class="text-sm font-bold">Descrição</label>
+      <textarea
+        rows="4"
+        type="text"
+        placeholder="Exemplo: Viagem de férias para a praia com duração de 30 dias"
+        v-model="newChallenge.description"
+        class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+      />
+    </div>
+    <div class="form-field">
+      <label for="" class="text-sm font-bold">Valor da meta</label>
+      <input
+        type="number"
+        placeholder="Valor da meta"
+        v-model.number="newChallenge.value"
+        class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+      />
+    </div>
 
     <footer class="flex gap-4 justify-end w-full mt-4">
       <Button
