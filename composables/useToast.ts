@@ -20,7 +20,7 @@ export const useToast = () => {
   const showToast = (
     message: string,
     type: ToastType = "Success",
-    duration: number = 3000
+    duration: number = 2000
   ) => {
     toastState.value = { isVisible: true, message, type };
     setTimeout(() => {

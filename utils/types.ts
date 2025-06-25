@@ -7,7 +7,7 @@ export interface Challenge {
   // Seus campos
   title: string;
   description: string;
-  value: number; // Use 'value' se a API retornar 'value', ou 'goal' se o frontend mapear
+  target_value: number; // Use 'value' se a API retornar 'value', ou 'goal' se o frontend mapear
   balance: number;
   user_id: number; // UserID em Go é 'uint', que é um número. No JSON será um número.
   active: boolean;

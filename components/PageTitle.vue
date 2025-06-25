@@ -1,5 +1,5 @@
 <template>
-  <h2 class="text-3xl font-bold">{{ content }}</h2>
+  <h2 class="text-2xl font-bold md:text-3xl">{{ content }}</h2>
 </template>
 
 <script lang="ts" setup>

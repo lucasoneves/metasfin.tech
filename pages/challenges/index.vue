@@ -1,11 +1,12 @@
 <template>
-  <header class="flex items-center gap-10 justify-between">
-    <PageTitle content="Minhas Metas" class="flex-2/3" />
-    <NuxtLink to="/challenges/new" class="flex-1">
+  <header class="flex items-center gap-10">
+    <PageTitle content="Minhas Metas" class="flex-1" />
+    <NuxtLink to="/challenges/new" class="flex-1 flex justify-end">
       <Button
         text="Criar Nova Meta"
         icon-name="heroicons:plus"
         variant="primary"
+        class="max-w-[220px]"
       />
     </NuxtLink>
   </header>
@@ -17,11 +18,13 @@
       :key="challenge.id"
       :challenge-id="challenge.id"
       :balance="challenge.balance"
-      :goal="challenge.value"
+      :goal="challenge.target_value"
       :title="challenge.title"
       :description="challenge.description"
-      :handleNewAporte="() => handleNewAporte(challenge.id)"
-      :handleDeleteChallenge="() => handleDeleteChallenge(challenge.id)"
+      :handleNewAporte="() => challenge.id && handleNewAporte(challenge.id)"
+      :handleDeleteChallenge="
+        () => challenge.id && handleDeleteChallenge(challenge.id)
+      "
     />
   </section>
 
@@ -66,41 +69,14 @@ const {
   error,
   refresh,
 } = await useFetch<Challenge[]>("http://localhost:8080/api/goals");
-
-// console.log(data.value);
-interface Challenge {
-  // Campos do gorm.Model (renomeados no JSON)
-  id: number; // O ID em Go é 'uint', que é um número. No JSON será um número.
-  created_at: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
-  updated_at: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
-  deleted_at: string | null; // Pode ser null se não for soft-deletado, ou uma string
-  // Seus campos
-  title: string;
-  description: string;
-  value: number; // Use 'value' se a API retornar 'value', ou 'goal' se o frontend mapear
-  balance: number;
-  user_id: number; // UserID em Go é 'uint', que é um número. No JSON será um número.
-  active: boolean;
-  completed: boolean;
-}
 const loading = useLoading();
 const { showToast } = useToast();
 
 const modalDeleteActive = ref(false);
 const modalAddMoney = ref(false);
-const aporteValue = ref<number | null>(null);
+const aporteValue = ref<number>(0);
 const challengeSelected = ref<number | null>(null);
 const challengeToDelete = ref<number | null>(null);
-
-const userChallenges = ref<Challenge[]>([]);
-
-const openModal = () => {
-  loading.value = true;
-};
-
-const closeModal = () => {
-  loading.value = false;
-};
 
 const handleNewAporte = (challengeId: number) => {
   handleAddMoney(challengeId);
@@ -146,11 +122,6 @@ const handleAddMoney = (challengeId: number) => {
   modalAddMoney.value = true;
   console.log(challengeId);
 };
-
-// Remover getValueAporte, pois usaremos v-model
-// const getValueAporte = (e: Event) => {
-//   aporteValue.value = parseFloat((e.target as HTMLInputElement).value);
-// };
 
 const handleSaveAporte = async () => {
   if (aporteValue.value === null || aporteValue.value <= 0) {
@@ -207,8 +178,7 @@ console.log(challenges);
 
 watch(modalAddMoney, (isModalActive) => {
   if (!isModalActive) {
-    // Limpa os valores quando o modal de adicionar aporte é fechado
-    aporteValue.value = null;
+    aporteValue.value = 0;
     challengeSelected.value = null;
   }
 });

@@ -32,9 +32,9 @@
     <div class="form-field">
       <label for="" class="text-sm font-bold">Valor da meta</label>
       <input
-        type="number"
-        placeholder="Valor da meta"
-        v-model.number="newChallenge.value"
+        type="text"
+        placeholder="R$ 0,00"
+        v-model="formattedValue"
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />
     </div>
@@ -59,30 +59,34 @@
 </template>
 
 <script setup lang="ts">
-interface Challenge {
-  // Campos do gorm.Model (renomeados no JSON)
-  id?: number; // O ID em Go é 'uint', que é um número. No JSON será um número.
-  created_at?: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
-  updated_at?: string; // `time.Time` em Go geralmente vem como string ISO 8601 no JSON
-  deleted_at?: string | null; // Pode ser null se não for soft-deletado, ou uma string
-  // Seus campos
-  title: string;
-  description: string;
-  value: number; // Use 'value' se a API retornar 'value', ou 'goal' se o frontend mapear
-  balance: number;
-  user_id: number; // UserID em Go é 'uint', que é um número. No JSON será um número.
-  active: boolean;
-  completed: boolean;
-}
-
 const newChallenge = ref<Challenge>({
   title: "",
   description: "",
-  value: 0,
+  target_value: 0,
   balance: 0,
   user_id: 1,
   active: true,
   completed: false,
+});
+
+const formattedValue = computed({
+  get() {
+    if (!newChallenge.value.target_value) {
+      return "";
+    }
+    // Formata o número para o padrão de moeda brasileiro.
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(newChallenge.value.target_value);
+  },
+  set(newValue: string) {
+    // Remove todos os caracteres que não são dígitos para obter apenas os números.
+    const digitsOnly = newValue.replace(/\D/g, "");
+    // Converte a string de dígitos para número e divide por 100 para tratar os centavos.
+    // Se não houver dígitos, o valor será 0.
+    newChallenge.value.target_value = Number(digitsOnly) / 100;
+  },
 });
 
 const handleSaveChallenge = async (e: Event) => {
@@ -96,7 +100,7 @@ const handleSaveChallenge = async (e: Event) => {
     return;
   }
 
-  if (newChallenge.value.value <= 0) {
+  if (newChallenge.value.target_value <= 0) {
     showToast("O valor da meta deve ser maior que 0.", "Error");
     return;
   }
@@ -141,7 +145,7 @@ const handleClearForm = () => {
   newChallenge.value = {
     title: "",
     description: "",
-    value: 0,
+    target_value: 0,
     balance: 0,
     user_id: 1,
     active: true,

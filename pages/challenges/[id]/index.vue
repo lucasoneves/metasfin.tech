@@ -29,11 +29,12 @@
       />
     </div>
     <div class="form-field">
-      <label for="" class="text-sm font-bold">Valor da meta</label>
+      <label for="value" class="text-sm font-bold">Valor da meta</label>
       <input
-        type="number"
-        placeholder="Valor da meta"
-        v-model.number="newChallenge.value"
+        id="value"
+        type="text"
+        placeholder="R$ 0,00"
+        v-model="formattedValue"
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />
     </div>
@@ -56,11 +57,31 @@ const challengeId = route.params.id;
 const newChallenge = ref<Challenge>({
   title: "",
   description: "",
-  value: 0,
+  target_value: 0,
   balance: 0,
   user_id: 0,
   active: true,
   completed: false,
+});
+
+const formattedValue = computed({
+  get() {
+    if (!newChallenge.value.target_value) {
+      return "";
+    }
+    // Formata o número para o padrão de moeda brasileiro.
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(newChallenge.value.target_value);
+  },
+  set(newValue: string) {
+    // Remove todos os caracteres que não são dígitos para obter apenas os números.
+    const digitsOnly = newValue.replace(/\D/g, "");
+    // Converte a string de dígitos para número e divide por 100 para tratar os centavos.
+    // Se não houver dígitos, o valor será 0.
+    newChallenge.value.target_value = Number(digitsOnly) / 100;
+  },
 });
 
 const handleSaveChallenge = async (e: Event) => {
@@ -74,7 +95,7 @@ const handleSaveChallenge = async (e: Event) => {
     return;
   }
 
-  if (newChallenge.value.value <= 0) {
+  if (newChallenge.value.target_value <= 0) {
     showToast("O valor da meta deve ser maior que 0.", "Error");
     return;
   }
@@ -121,6 +142,8 @@ try {
     `http://localhost:8080/api/goals/${challengeId}`
   );
 
-  newChallenge.value = challenge.value;
+  if (status.value === "success") {
+    newChallenge.value = challenge.value as Challenge;
+  }
 } catch (error) {}
 </script>
