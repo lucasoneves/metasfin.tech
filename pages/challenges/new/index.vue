@@ -48,8 +48,6 @@
 </template>
 
 <script setup lang="ts">
-const id = ref(0);
-
 interface Challenge {
   // Campos do gorm.Model (renomeados no JSON)
   id?: number; // O ID em Go é 'uint', que é um número. No JSON será um número.
@@ -81,6 +79,17 @@ const handleSaveChallenge = async (e: Event) => {
 
   const loading = useLoading(); // Assumindo que useLoading() retorna uma ref para o estado de loading global
   const { showToast } = useToast();
+
+  if (newChallenge.value.title.trim() === "") {
+    showToast("Por favor, preencha o título da meta.", "Error");
+    return;
+  }
+
+  if (newChallenge.value.value <= 0) {
+    showToast("O valor da meta deve ser maior que 0.", "Error");
+    return;
+  }
+
   loading.value = true; // Ativar o loading ANTES da requisição
 
   try {

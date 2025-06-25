@@ -68,6 +68,17 @@ const handleSaveChallenge = async (e: Event) => {
 
   const loading = useLoading();
   const { showToast } = useToast();
+
+  if (newChallenge.value.title.trim() === "") {
+    showToast("Por favor, preencha o título da meta.", "Error");
+    return;
+  }
+
+  if (newChallenge.value.value <= 0) {
+    showToast("O valor da meta deve ser maior que 0.", "Error");
+    return;
+  }
+
   loading.value = true;
 
   try {
