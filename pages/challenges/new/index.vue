@@ -29,14 +29,26 @@
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />
     </div>
-    <div class="form-field">
-      <label for="" class="text-sm font-bold">Valor da meta</label>
-      <input
-        type="text"
-        placeholder="R$ 0,00"
-        v-model="formattedValue"
-        class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
-      />
+
+    <div class="flex gap-4">
+      <div class="form-field flex-1">
+        <label for="" class="text-sm font-bold">Saldo atual</label>
+        <input
+          type="text"
+          placeholder="R$ 0,00"
+          v-model="formattedBallance"
+          class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+        />
+      </div>
+      <div class="form-field flex-1">
+        <label for="" class="text-sm font-bold">Valor da meta</label>
+        <input
+          type="text"
+          placeholder="R$ 0,00"
+          v-model="formattedValue"
+          class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+        />
+      </div>
     </div>
 
     <footer class="flex gap-4 justify-end w-full mt-4">
@@ -53,7 +65,6 @@
         variant="primary"
         class="flex-1 max-w-[220px]"
       ></Button>
-      <!-- O @click foi removido do botão Salvar, pois type="submit" acionará o @submit do formulário -->
     </footer>
   </form>
 </template>
@@ -74,25 +85,37 @@ const formattedValue = computed({
     if (!newChallenge.value.target_value) {
       return "";
     }
-    // Formata o número para o padrão de moeda brasileiro.
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(newChallenge.value.target_value);
   },
   set(newValue: string) {
-    // Remove todos os caracteres que não são dígitos para obter apenas os números.
     const digitsOnly = newValue.replace(/\D/g, "");
-    // Converte a string de dígitos para número e divide por 100 para tratar os centavos.
-    // Se não houver dígitos, o valor será 0.
     newChallenge.value.target_value = Number(digitsOnly) / 100;
   },
 });
 
-const handleSaveChallenge = async (e: Event) => {
-  e.preventDefault(); // Prevenir o comportamento padrão do formulário primeiro
+const formattedBallance = computed({
+  get() {
+    if (!newChallenge.value.balance) {
+      return "";
+    }
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(newChallenge.value.balance);
+  },
+  set(newValue: string) {
+    const digitsOnly = newValue.replace(/\D/g, "");
+    newChallenge.value.balance = Number(digitsOnly) / 100;
+  },
+});
 
-  const loading = useLoading(); // Assumindo que useLoading() retorna uma ref para o estado de loading global
+const handleSaveChallenge = async (e: Event) => {
+  e.preventDefault();
+
+  const loading = useLoading();
   const { showToast } = useToast();
 
   if (newChallenge.value.title.trim() === "") {
@@ -105,20 +128,15 @@ const handleSaveChallenge = async (e: Event) => {
     return;
   }
 
-  loading.value = true; // Ativar o loading ANTES da requisição
+  loading.value = true;
 
   try {
-    const { error } = await useFetch(
-      // Não precisamos desestruturar 'data' ou 'pending' se não forem usados diretamente aqui
-      "http://localhost:8080/api/goals",
-      {
-        method: "POST",
-        body: newChallenge.value,
-      }
-    );
+    const { error } = await useFetch("http://localhost:5000/api/goals", {
+      method: "POST",
+      body: newChallenge.value,
+    });
 
     if (error.value) {
-      // Tratar o erro, talvez mostrar uma notificação para o usuário
       console.error("Erro ao salvar a meta:", error.value);
       showToast(
         `Erro ao salvar a meta: ${
@@ -127,13 +145,11 @@ const handleSaveChallenge = async (e: Event) => {
         "Error"
       );
     } else {
-      // Se não houver erro, limpar o formulário e redirecionar
       handleClearForm();
       showToast("Meta salva com sucesso!", "Success");
-      await navigateTo("/challenges"); // Redirecionar para a lista de metas
+      await navigateTo("/challenges");
     }
   } catch (err) {
-    // Capturar outros erros inesperados (ex: problemas de rede, erros no try block)
     console.error("Ocorreu um erro inesperado ao tentar salvar a meta:", err);
     showToast("Ocorreu um erro inesperado.", "Error");
   } finally {

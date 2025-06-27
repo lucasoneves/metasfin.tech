@@ -28,15 +28,25 @@
         class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
       />
     </div>
-    <div class="form-field">
-      <label for="value" class="text-sm font-bold">Valor da meta</label>
-      <input
-        id="value"
-        type="text"
-        placeholder="R$ 0,00"
-        v-model="formattedValue"
-        class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
-      />
+    <div class="flex gap-4">
+      <div class="form-field flex-1">
+        <label for="" class="text-sm font-bold">Saldo atual</label>
+        <input
+          type="text"
+          placeholder="R$ 0,00"
+          v-model="formattedBallance"
+          class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+        />
+      </div>
+      <div class="form-field flex-1">
+        <label for="" class="text-sm font-bold">Valor da meta</label>
+        <input
+          type="text"
+          placeholder="R$ 0,00"
+          v-model="formattedValue"
+          class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
+        />
+      </div>
     </div>
 
     <footer class="flex gap-4 justify-end w-full mt-4">
@@ -64,22 +74,34 @@ const newChallenge = ref<Challenge>({
   completed: false,
 });
 
+const formattedBallance = computed({
+  get() {
+    if (!newChallenge.value.balance) {
+      return "";
+    }
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(newChallenge.value.balance);
+  },
+  set(newValue: string) {
+    const digitsOnly = newValue.replace(/\D/g, "");
+    newChallenge.value.balance = Number(digitsOnly) / 100;
+  },
+});
+
 const formattedValue = computed({
   get() {
     if (!newChallenge.value.target_value) {
       return "";
     }
-    // Formata o número para o padrão de moeda brasileiro.
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(newChallenge.value.target_value);
   },
   set(newValue: string) {
-    // Remove todos os caracteres que não são dígitos para obter apenas os números.
     const digitsOnly = newValue.replace(/\D/g, "");
-    // Converte a string de dígitos para número e divide por 100 para tratar os centavos.
-    // Se não houver dígitos, o valor será 0.
     newChallenge.value.target_value = Number(digitsOnly) / 100;
   },
 });
@@ -104,7 +126,7 @@ const handleSaveChallenge = async (e: Event) => {
 
   try {
     const { error } = await useFetch(
-      `http://localhost:8080/api/goals/${challengeId}`,
+      `http://localhost:5000/api/goals/${challengeId}`,
       {
         method: "PUT",
         body: newChallenge.value,
@@ -139,7 +161,7 @@ try {
     error,
     refresh,
   } = await useFetch<Challenge>(
-    `http://localhost:8080/api/goals/${challengeId}`
+    `http://localhost:5000/api/goals/${challengeId}`
   );
 
   if (status.value === "success") {
