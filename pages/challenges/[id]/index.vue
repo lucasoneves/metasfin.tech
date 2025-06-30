@@ -63,6 +63,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const challengeId = route.params.id;
+const loading = useLoading();
 
 const newChallenge = ref<Challenge>({
   title: "",
@@ -154,6 +155,7 @@ const handleSaveChallenge = async (e: Event) => {
 };
 
 try {
+  loading.value = true;
   const {
     data: challenge,
     pending,
@@ -167,5 +169,8 @@ try {
   if (status.value === "success") {
     newChallenge.value = challenge.value as Challenge;
   }
-} catch (error) {}
+} catch (error) {
+} finally {
+  loading.value = false;
+}
 </script>
