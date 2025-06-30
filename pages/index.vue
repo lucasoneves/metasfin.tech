@@ -11,13 +11,13 @@
         <h3 class="mt-4 mb-4 text-2xl font-bold">Seu Resumo Rápido</h3>
         <div class="flex items-center gap-2">
           <div
-            class="p-4 flex items-center h-40 flex-1 justify-center flex-col gap-2 shadow-md"
+            class="p-4 flex bg-white rounded-xl items-center h-40 flex-1 justify-center flex-col shadow-md"
           >
             <h3 class="text-3xl font-bold">3</h3>
             <span class="text-lg">Metas ativas</span>
           </div>
           <div
-            class="p-4 flex items-center h-40 flex-1 gap-2 justify-center flex-col shadow-md"
+            class="p-4 flex bg-white rounded-xl items-center h-40 flex-1 justify-center flex-col shadow-md"
           >
             <h3 class="text-lg">Saldo total de</h3>
             <span class="text-3xl font-bold">R$ 250,00</span>
