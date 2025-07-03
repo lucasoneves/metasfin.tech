@@ -51,8 +51,8 @@
   >
     <form @submit.prevent="handleSaveAporte">
       <input
-        type="number"
-        v-model.number="aporteValue"
+        type="text"
+        v-model="formattedValue"
         placeholder="Valor"
         class="py-2 px-4 rounded-lg text-sm border border-gray-400 w-full"
       />
@@ -176,6 +176,22 @@ const handleSaveAporte = async () => {
     loading.value = false;
   }
 };
+
+const formattedValue = computed({
+  get() {
+    if (!aporteValue.value) {
+      return "";
+    }
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(aporteValue.value);
+  },
+  set(newValue: string) {
+    const digitsOnly = newValue.replace(/\D/g, "");
+    aporteValue.value = Number(digitsOnly) / 100;
+  },
+});
 
 watch(modalAddMoney, (isModalActive) => {
   if (!isModalActive) {

@@ -12,7 +12,7 @@
       <nav class="flex-1 flex justify-end items-center">
         <ul class="flex gap-10">
           <li class="text-sm">
-            <NuxtLink to="/challenges">Challenges</NuxtLink>
+            <NuxtLink to="/challenges">Metas</NuxtLink>
           </li>
         </ul>
       </nav>
