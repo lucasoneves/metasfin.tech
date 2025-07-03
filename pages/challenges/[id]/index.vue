@@ -1,11 +1,11 @@
 <template>
-  <PageTitle :content="`Detalhe do challenge: ${challengeId}`" />
+  <PageTitle :content="`${newChallenge.title}`" />
   <PageDescription
     content="Visualize e edite os detalhes da sua meta financeira. Acompanhe seu progresso e faça os ajustes necessários."
   />
   <form
     action="#"
-    class="mt-10 flex gap-4 flex-col w-8/12"
+    class="mt-10 flex gap-4 flex-col w-full md:w-8/12"
     @submit="handleSaveChallenge"
   >
     <div class="form-field">

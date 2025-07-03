@@ -6,7 +6,7 @@
   />
   <form
     action="#"
-    class="mt-10 flex gap-4 flex-col w-8/12"
+    class="mt-10 flex gap-4 flex-col w-full md:w-8/12"
     @submit="handleSaveChallenge"
   >
     <div class="form-field">
