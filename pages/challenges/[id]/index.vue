@@ -64,6 +64,7 @@
 const route = useRoute();
 const challengeId = route.params.id;
 const loading = useLoading();
+const config = useRuntimeConfig();
 
 const newChallenge = ref<Challenge>({
   title: "",
@@ -127,7 +128,7 @@ const handleSaveChallenge = async (e: Event) => {
 
   try {
     const { error } = await useFetch(
-      `http://localhost:5000/api/goals/${challengeId}`,
+      `${config.public.apiBaseUrl}/api/goals/${challengeId}`,
       {
         method: "PUT",
         body: newChallenge.value,
@@ -163,7 +164,7 @@ try {
     error,
     refresh,
   } = await useFetch<Challenge>(
-    `http://localhost:5000/api/goals/${challengeId}`
+    `${config.public.apiBaseUrl}/api/goals/${challengeId}`
   );
 
   if (status.value === "success") {

@@ -117,6 +117,7 @@ const handleSaveChallenge = async (e: Event) => {
 
   const loading = useLoading();
   const { showToast } = useToast();
+  const config = useRuntimeConfig();
 
   if (newChallenge.value.title.trim() === "") {
     showToast("Por favor, preencha o título da meta.", "Error");
@@ -131,7 +132,7 @@ const handleSaveChallenge = async (e: Event) => {
   loading.value = true;
 
   try {
-    const { error } = await useFetch("http://localhost:5000/api/goals", {
+    const { error } = await useFetch(`${config.public.apiBaseUrl}/api/goals`, {
       method: "POST",
       body: newChallenge.value,
     });

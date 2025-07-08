@@ -63,12 +63,16 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ["auth"], // Aplica o middleware 'auth' a esta página
+});
+const config = useRuntimeConfig();
 const {
   data: challenges,
   pending,
   error,
   refresh,
-} = await useFetch<Challenge[]>("http://localhost:5000/api/goals");
+} = await useFetch<Challenge[]>(`${config.public.apiBaseUrl}/api/goals`);
 const loading = useLoading();
 const { showToast } = useToast();
 
@@ -97,7 +101,7 @@ const handleConfirmDelete = async () => {
   try {
     if (challengeToDelete.value) {
       const { error, pending } = await useFetch(
-        `http://localhost:5000/api/goals/${id}`,
+        `${config.public.apiBaseUrl}/api/goals/${id}`,
         {
           method: "DELETE",
         }
@@ -146,7 +150,7 @@ const handleSaveAporte = async () => {
     // ATENÇÃO: Verifique se este é o endpoint correto para adicionar fundos/aporte.
     // Exemplo: POST /api/goals/{goalId}/deposit ou /api/goals/{goalId}/add-money
     const { error: fetchError } = await useFetch(
-      `http://localhost:5000/api/goals/deposit/${goalId}`,
+      `${config.public.apiBaseUrl}/api/goals/deposit/${goalId}`,
 
       {
         method: "POST",
