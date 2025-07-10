@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 defineProps({
-  path: Number,
+  path: String,
   text: String,
 });
 </script>

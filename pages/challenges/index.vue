@@ -63,9 +63,6 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  middleware: ["auth"], // Aplica o middleware 'auth' a esta página
-});
 const config = useRuntimeConfig();
 const {
   data: challenges,
