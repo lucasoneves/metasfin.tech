@@ -4,6 +4,10 @@
   >
     <form action="" class="flex flex-col gap-4">
       <PageTitle content="Login" />
+      <PageDescription
+        content="Que bom te ver de novo! Faça o login para continuar no caminho de suas conquistas financeiras."
+        class="text-sm"
+      />
       <section>
         <label for="email" class="text-sm font-bold">Email</label>
         <input
@@ -44,11 +48,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { NuxtLink, Title } from "#components";
-import Button from "~/components/Button.vue";
-import PageLink from "~/components/PageLink.vue";
-import PageTitle from "~/components/PageTitle.vue";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>
