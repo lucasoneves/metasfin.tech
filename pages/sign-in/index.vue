@@ -2,7 +2,12 @@
   <div
     class="mt-10 ml-auto mr-auto flex gap-4 flex-col w-full md:w-6/12 bg-white p-10 shadow-sm rounded-sm"
   >
-    <form action="" class="flex flex-col gap-4">
+    <form
+      action=""
+      class="flex flex-col gap-4"
+      novalidate
+      @submit.prevent="handleSubmit"
+    >
       <PageTitle content="Login" />
       <PageDescription
         content="Que bom te ver de novo! Faça o login para continuar no caminho de suas conquistas financeiras."
@@ -11,6 +16,7 @@
       <section>
         <label for="email" class="text-sm font-bold">Email</label>
         <input
+          v-model="userEmail"
           id="email"
           name="email"
           type="email"
@@ -23,6 +29,7 @@
       <section>
         <label for="password" class="text-sm font-bold">Password</label>
         <input
+          v-model="userPassword"
           id="password"
           name="password"
           type="password"
@@ -48,6 +55,73 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useAuthStore } from "~/stores/auth";
+
+const userEmail = ref<string>("");
+const loading = useLoading();
+const userPassword = ref<string>("");
+const { showToast } = useToast();
+const config = useRuntimeConfig();
+const authStore = useAuthStore();
+
+interface LoginResponse {
+  token: string;
+  user: object; // Você pode criar uma interface mais específica para o usuário
+}
+
+const handleSubmit = async () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(userEmail.value)) {
+    showToast("Por favor, insira um email válido.", "Error");
+    return;
+  }
+  if (userPassword.value.length < 6) {
+    showToast("A senha deve ter no mínimo 6 caracteres.", "Error");
+    return;
+  }
+  if (!userEmail.value || !userPassword.value) {
+    showToast("Por favor, preencha todos os campos.", "Error");
+    return;
+  }
+
+  try {
+    loading.value = true;
+    const { data, error } = await useFetch<LoginResponse>(
+      `${config.public.apiBaseUrl}/api/auth/login`,
+
+      {
+        method: "POST",
+        body: {
+          email: userEmail.value,
+          password: userPassword.value,
+        },
+      }
+    );
+
+    if (error.value) {
+      console.error("Erro ao realizar o login:", error.value);
+      const errorMessage =
+        error.value.data?.error || // Tenta pegar msg de erro da API
+        error.value.message ||
+        "Erro ao realizar o login. Tente novamente.";
+      showToast(errorMessage, "Error");
+    } else if (data.value) {
+      authStore.setToken(data.value.token);
+      authStore.setUser(data.value.user); // <-- Adicione esta linha
+      showToast("Login realizado com sucesso", "Success");
+      await navigateTo("/challenges"); // Ou para a página de dashboard
+    }
+  } catch (err) {
+    console.error("Erro inesperado ao realizar o login:", err);
+    showToast(
+      "Ocorreu um erro inesperado. Por favor, tente novamente.",
+      "Error"
+    );
+  } finally {
+    loading.value = false;
+  }
+};
+</script>
 
 <style scoped></style>

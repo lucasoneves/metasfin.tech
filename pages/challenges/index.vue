@@ -63,6 +63,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: "auth",
+});
+
 const config = useRuntimeConfig();
 const {
   data: challenges,
@@ -106,9 +110,9 @@ const handleConfirmDelete = async () => {
 
       if (error.value) {
         showToast("Erro ao deletar a meta", "Error");
+      } else {
+        showToast("Meta deletada com sucesso!", "Success");
       }
-
-      showToast("Meta deletada com sucesso!", "Success");
       await refresh();
     }
   } catch (error) {

@@ -11,7 +11,7 @@
       <PageTitle content="Criar Conta" />
       <PageDescription
         content="Crie sua conta e dê o primeiro passo para transformar seus sonhos em realidade. Organize suas metas e acompanhe seu progresso."
-        class="text-sm text-center"
+        class="text-sm"
       />
       <section>
         <label for="name" class="text-sm font-bold">Nome</label>
@@ -49,6 +49,7 @@
           required
           class="py-3 px-4 rounded-lg bg-white border text-sm border-gray-300 w-full"
         />
+        <span class="text-xs">*Mínimo de 6 caracteres</span>
       </section>
       <Button text="Criar Conta" variant="primary" class="mt-4" />
     </form>
@@ -67,15 +68,15 @@ const userEmail = ref("");
 const userPassword = ref("");
 const { showToast } = useToast();
 
-const handleSubmit = () => {
+const validateUserForm = () => {
   if (!userName.value || !userEmail.value || !userPassword.value) {
-    showToast("Por favor, preencha todos os campos.", "Error");
+    showToast("Preencha todos os campos.", "Error");
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(userEmail.value)) {
-    showToast("Por favor, insira um email válido.", "Error");
+    showToast("Email inválido", "Error");
     return;
   }
 
@@ -84,6 +85,15 @@ const handleSubmit = () => {
     return;
   }
 
+  return true;
+};
+
+const handleSubmit = () => {
+  // validateUserForm();
+
+  if (!validateUserForm()) {
+    return;
+  }
   console.log("Usuário válido, pronto para registrar:", {
     name: userName.value,
     email: userEmail.value,

@@ -44,6 +44,9 @@
 <script setup>
 // Se estiver usando Vue.js 3 com Composition API, este arquivo será um componente Vue.
 // Por enquanto, não há lógica complexa aqui, apenas a estrutura.
+definePageMeta({
+  middleware: "auth",
+});
 </script>
 
 <style scoped></style>
