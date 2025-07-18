@@ -66,14 +66,18 @@
 definePageMeta({
   middleware: "auth",
 });
-
+const authStore = useAuthStore();
 const config = useRuntimeConfig();
 const {
   data: challenges,
   pending,
   error,
   refresh,
-} = await useFetch<Challenge[]>(`${config.public.apiBaseUrl}/api/goals`);
+} = await useFetch<Challenge[]>(`${config.public.apiBaseUrl}/goals`, {
+  headers: {
+    Authorization: `Bearer ${authStore.token}`,
+  },
+});
 const loading = useLoading();
 const { showToast } = useToast();
 
@@ -102,9 +106,12 @@ const handleConfirmDelete = async () => {
   try {
     if (challengeToDelete.value) {
       const { error, pending } = await useFetch(
-        `${config.public.apiBaseUrl}/api/goals/${id}`,
+        `${config.public.apiBaseUrl}/goals/${id}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authStore.userToken}`,
+          },
         }
       );
 
@@ -113,12 +120,12 @@ const handleConfirmDelete = async () => {
       } else {
         showToast("Meta deletada com sucesso!", "Success");
       }
-      await refresh();
     }
   } catch (error) {
     console.log("Erro ao deletar a meta:", error);
     showToast("Erro ao deletar a meta", "Error");
   } finally {
+    await refresh();
     loading.value = false;
   }
 
@@ -151,11 +158,14 @@ const handleSaveAporte = async () => {
     // ATENÇÃO: Verifique se este é o endpoint correto para adicionar fundos/aporte.
     // Exemplo: POST /api/goals/{goalId}/deposit ou /api/goals/{goalId}/add-money
     const { error: fetchError } = await useFetch(
-      `${config.public.apiBaseUrl}/api/goals/deposit/${goalId}`,
+      `${config.public.apiBaseUrl}/goals/deposit/${goalId}`,
 
       {
         method: "POST",
         body: { amount }, // A API deve esperar um corpo como { "amount": valor }
+        headers: {
+          Authorization: `Bearer ${authStore.userToken}`,
+        },
       }
     );
 
@@ -198,7 +208,7 @@ const formattedValue = computed({
   },
 });
 
-watch(modalAddMoney, (isModalActive) => {
+watch(modalAddMoney, (isModalActive: boolean) => {
   if (!isModalActive) {
     aporteValue.value = 0;
     challengeSelected.value = null;

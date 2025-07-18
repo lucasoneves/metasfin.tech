@@ -70,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+const authStore = useAuthStore();
 const newChallenge = ref<Challenge>({
   title: "",
   description: "",
@@ -132,9 +133,12 @@ const handleSaveChallenge = async (e: Event) => {
   loading.value = true;
 
   try {
-    const { error } = await useFetch(`${config.public.apiBaseUrl}/api/goals`, {
+    const { error } = await useFetch(`${config.public.apiBaseUrl}/goals`, {
       method: "POST",
       body: newChallenge.value,
+      headers: {
+        Authorization: `Bearer ${authStore.userToken}`,
+      },
     });
 
     if (error.value) {

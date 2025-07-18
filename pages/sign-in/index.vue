@@ -88,7 +88,7 @@ const handleSubmit = async () => {
   try {
     loading.value = true;
     const { data, error } = await useFetch<LoginResponse>(
-      `${config.public.apiBaseUrl}/api/auth/login`,
+      `${config.public.apiBaseUrl}/auth/login`,
 
       {
         method: "POST",

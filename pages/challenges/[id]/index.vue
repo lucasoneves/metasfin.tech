@@ -61,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+const authStore = useAuthStore();
 const route = useRoute();
 const challengeId = route.params.id;
 const loading = useLoading();
@@ -128,10 +129,13 @@ const handleSaveChallenge = async (e: Event) => {
 
   try {
     const { error } = await useFetch(
-      `${config.public.apiBaseUrl}/api/goals/${challengeId}`,
+      `${config.public.apiBaseUrl}/goals/${challengeId}`,
       {
         method: "PUT",
         body: newChallenge.value,
+        headers: {
+          Authorization: `Bearer ${authStore.userToken}`,
+        },
       }
     );
 
@@ -164,7 +168,12 @@ try {
     error,
     refresh,
   } = await useFetch<Challenge>(
-    `${config.public.apiBaseUrl}/api/goals/${challengeId}`
+    `${config.public.apiBaseUrl}/goals/${challengeId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${authStore.userToken}`,
+      },
+    }
   );
 
   if (status.value === "success") {

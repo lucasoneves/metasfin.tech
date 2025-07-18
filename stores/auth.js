@@ -56,5 +56,6 @@ export const useAuthStore = defineStore("auth", {
   getters: {
     // Uma verificação mais robusta inclui o token e o usuário.
     isAuthenticated: (state) => !!state.token && !!state.user,
+    userToken: (state) => state.token,
   },
 });
