@@ -36,6 +36,7 @@ export default defineNuxtConfig({
     ],
     "@nuxt/icon",
     "@pinia/nuxt",
+    "pinia-plugin-persistedstate/nuxt",
   ],
-  plugins: ["~/plugins/auth.client.js"],
+  // plugins: ["~/plugins/pinia.ts"],
 });

@@ -137,7 +137,7 @@ const handleSaveChallenge = async (e: Event) => {
       method: "POST",
       body: newChallenge.value,
       headers: {
-        Authorization: `Bearer ${authStore.userToken}`,
+        Authorization: `Bearer ${authStore.token}`,
       },
     });
 

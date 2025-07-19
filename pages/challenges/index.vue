@@ -110,7 +110,7 @@ const handleConfirmDelete = async () => {
         {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${authStore.userToken}`,
+            Authorization: `Bearer ${authStore.token}`,
           },
         }
       );
@@ -164,7 +164,7 @@ const handleSaveAporte = async () => {
         method: "POST",
         body: { amount }, // A API deve esperar um corpo como { "amount": valor }
         headers: {
-          Authorization: `Bearer ${authStore.userToken}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       }
     );

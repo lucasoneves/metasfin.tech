@@ -134,7 +134,7 @@ const handleSaveChallenge = async (e: Event) => {
         method: "PUT",
         body: newChallenge.value,
         headers: {
-          Authorization: `Bearer ${authStore.userToken}`,
+          Authorization: `Bearer ${authStore.token}`,
         },
       }
     );
@@ -171,7 +171,7 @@ try {
     `${config.public.apiBaseUrl}/goals/${challengeId}`,
     {
       headers: {
-        Authorization: `Bearer ${authStore.userToken}`,
+        Authorization: `Bearer ${authStore.token}`,
       },
     }
   );
