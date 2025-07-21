@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "~/stores/auth";
+import { useAuthStore, type User } from "~/stores/auth";
 
 const userEmail = ref<string>("");
 const loading = useLoading();
@@ -67,7 +67,7 @@ const authStore = useAuthStore();
 
 interface LoginResponse {
   token: string;
-  user: object; // Você pode criar uma interface mais específica para o usuário
+  user: User;
 }
 
 const handleSubmit = async () => {

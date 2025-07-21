@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white shadow w-full">
+  <header v-if="authStore.isAuthenticated" class="bg-white shadow w-full">
     <section
       class="max-w-6xl mx-auto flex justify-between items-center p-4 gap-12"
     >
@@ -15,14 +15,17 @@
         </ul>
       </nav>
 
-      <div class="user-settings flex items-center gap-4">
+      <div v-if="authStore.user" class="user-settings flex items-center gap-4">
+        <span class="text-xs">{{ authStore.user.username }}</span>
         <img src="/images/user_avatar.png" alt="User avatar" width="40" />
       </div>
     </section>
   </header>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const authStore = useAuthStore();
+</script>
 
 <style module>
 .title {

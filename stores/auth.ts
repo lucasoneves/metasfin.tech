@@ -1,17 +1,27 @@
-// stores/auth.js
-
 import { defineStore } from "pinia";
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  // Adicione outras propriedades do usuário conforme necessário
+}
+
+interface AuthState {
+  token: string | null;
+  user: User | null;
+}
+
 export const useAuthStore = defineStore("auth", {
-  state: () => ({
+  state: (): AuthState => ({
     token: null,
     user: null,
   }),
   actions: {
-    setToken(token) {
+    setToken(token: string | null) {
       this.token = token;
     },
-    setUser(user) {
+    setUser(user: User | null) {
       this.user = user;
     },
     logout() {
@@ -21,7 +31,7 @@ export const useAuthStore = defineStore("auth", {
   },
   getters: {
     isAuthenticated: (state) => !!state.token && !!state.user,
-    userToken: (state) => state.token,
+    userToken: (state): string | null => state.token,
   },
   persist: true,
 });
