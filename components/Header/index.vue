@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <header class="bg-white shadow w-full">
     <section
@@ -23,6 +21,8 @@
     </section>
   </header>
 </template>
+
+<script setup lang="ts"></script>
 
 <style module>
 .title {
