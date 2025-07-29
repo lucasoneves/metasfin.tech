@@ -63,10 +63,12 @@
 </template>
 
 <script setup lang="ts">
+const loading = useLoading();
 const userName = ref("");
 const userEmail = ref("");
 const userPassword = ref("");
 const { showToast } = useToast();
+const config = useRuntimeConfig();
 
 const validateUserForm = () => {
   if (!userName.value || !userEmail.value || !userPassword.value) {
@@ -88,16 +90,43 @@ const validateUserForm = () => {
   return true;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   // validateUserForm();
 
   if (!validateUserForm()) {
     return;
   }
-  console.log("Usuário válido, pronto para registrar:", {
-    name: userName.value,
-    email: userEmail.value,
-    password: userPassword.value,
-  });
+
+  try {
+    loading.value = true;
+    const { data, error } = await useFetch(
+      `${config.public.apiBaseUrl}/auth/signup`,
+
+      {
+        method: "POST",
+        body: {
+          username: userName.value,
+          email: userEmail.value,
+          password: userPassword.value,
+        },
+      }
+    );
+    if (error.value) {
+      showToast("Erro ao criar conta. Tente novamente.", "Error");
+      return;
+    }
+    if (data.value) {
+      showToast("Conta criada com sucesso!", "Success");
+      useRouter().push("/sign-in");
+    }
+  } catch (error) {
+    console.error("Erro ao criar conta:", error);
+    showToast("Erro ao criar conta. Tente novamente.", "Error");
+  } finally {
+    userName.value = "";
+    userEmail.value = "";
+    userPassword.value = "";
+    loading.value = false;
+  }
 };
 </script>
