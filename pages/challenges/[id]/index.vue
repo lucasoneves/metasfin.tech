@@ -61,20 +61,62 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: "auth",
+  title: "Editar Meta",
+});
 const authStore = useAuthStore();
+const challengeStore = useChallengeStore();
 const route = useRoute();
 const challengeId = route.params.id;
 const loading = useLoading();
 const config = useRuntimeConfig();
+const { showToast } = useToast();
 
 const newChallenge = ref<Challenge>({
-  title: "",
-  description: "",
-  target_value: 0,
-  balance: 0,
-  user_id: 0,
   active: true,
+  balance: 0,
   completed: false,
+  created_at: "",
+  deleted_at: null,
+  description: "",
+  id: 0,
+  target_value: 0,
+  title: "",
+  updated_at: "",
+  user_id: 0,
+});
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const { data, error } = await useFetch<Challenge>(
+      `${config.public.apiBaseUrl}/goals/${challengeId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      }
+    );
+
+    if (error.value) {
+      console.error("Erro ao buscar a meta:", error.value);
+      showToast(
+        `Erro ao buscar a meta: ${
+          error.value.data?.message || error.value.statusMessage
+        }`,
+        "Error"
+      );
+    } else if (data.value) {
+      newChallenge.value = data.value;
+      challengeStore.setChallenge(data.value);
+    }
+  } catch (err) {
+    console.error("Ocorreu um erro inesperado ao tentar buscar a meta:", err);
+    showToast("Ocorreu um erro inesperado.", "Error");
+  } finally {
+    loading.value = false;
+  }
 });
 
 const formattedBallance = computed({
@@ -158,29 +200,4 @@ const handleSaveChallenge = async (e: Event) => {
     loading.value = false;
   }
 };
-
-try {
-  loading.value = true;
-  const {
-    data: challenge,
-    pending,
-    status,
-    error,
-    refresh,
-  } = await useFetch<Challenge>(
-    `${config.public.apiBaseUrl}/goals/${challengeId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${authStore.token}`,
-      },
-    }
-  );
-
-  if (status.value === "success") {
-    newChallenge.value = challenge.value as Challenge;
-  }
-} catch (error) {
-} finally {
-  loading.value = false;
-}
 </script>

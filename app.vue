@@ -8,8 +8,19 @@
   <Toast />
 </template>
 <script lang="ts" setup>
+definePageMeta({
+  middleware: "auth",
+});
 const loading = useLoading();
-// O componente Toast agora gerencia seu próprio estado via useToast(),
-// então não precisamos mais obter `toast` aqui para passá-lo como prop.
+const authStore = useAuthStore();
+const router = useRouter();
+watch(
+  () => authStore.isAuthenticated,
+  (isAuthenticated) => {
+    if (!isAuthenticated) {
+      router.push("/sign-in");
+    }
+  }
+);
 </script>
 <style></style>

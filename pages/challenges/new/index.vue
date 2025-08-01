@@ -70,6 +70,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: "auth",
+  title: "Adicionar Nova Meta",
+});
 const authStore = useAuthStore();
 const newChallenge = ref<Challenge>({
   title: "",
