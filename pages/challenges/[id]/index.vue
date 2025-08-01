@@ -1,4 +1,4 @@
-<template>
+<template v-if="newChallenge.title">
   <PageTitle :content="`${newChallenge.title}`" />
   <PageDescription
     content="Visualize e edite os detalhes da sua meta financeira. Acompanhe seu progresso e faça os ajustes necessários."
@@ -19,8 +19,9 @@
       />
     </div>
     <div class="form-field">
-      <label for="title" class="text-sm font-bold">Descrição</label>
+      <label for="description" class="text-sm font-bold">Descrição</label>
       <textarea
+        id="description"
         rows="4"
         type="text"
         placeholder="Exemplo: Viagem de férias para a praia com duração de 30 dias"
@@ -30,8 +31,9 @@
     </div>
     <div class="flex gap-4">
       <div class="form-field flex-1">
-        <label for="" class="text-sm font-bold">Saldo atual</label>
+        <label for="balance" class="text-sm font-bold">Saldo atual</label>
         <input
+          id="balance"
           type="text"
           placeholder="R$ 0,00"
           v-model="formattedBallance"
@@ -39,8 +41,9 @@
         />
       </div>
       <div class="form-field flex-1">
-        <label for="" class="text-sm font-bold">Valor da meta</label>
+        <label for="target" class="text-sm font-bold">Valor da meta</label>
         <input
+          id="target"
           type="text"
           placeholder="R$ 0,00"
           v-model="formattedValue"
@@ -66,7 +69,6 @@ definePageMeta({
   title: "Editar Meta",
 });
 const authStore = useAuthStore();
-const challengeStore = useChallengeStore();
 const route = useRoute();
 const challengeId = route.params.id;
 const loading = useLoading();
@@ -86,11 +88,11 @@ const newChallenge = ref<Challenge>({
   updated_at: "",
   user_id: 0,
 });
+loading.value = true;
 
 onMounted(async () => {
-  loading.value = true;
   try {
-    const { data, error } = await useFetch<Challenge>(
+    const data = await $fetch<Challenge>(
       `${config.public.apiBaseUrl}/goals/${challengeId}`,
       {
         headers: {
@@ -99,21 +101,11 @@ onMounted(async () => {
       }
     );
 
-    if (error.value) {
-      console.error("Erro ao buscar a meta:", error.value);
-      showToast(
-        `Erro ao buscar a meta: ${
-          error.value.data?.message || error.value.statusMessage
-        }`,
-        "Error"
-      );
-    } else if (data.value) {
-      newChallenge.value = data.value;
-      challengeStore.setChallenge(data.value);
+    if (data) {
+      newChallenge.value = data;
     }
-  } catch (err) {
-    console.error("Ocorreu um erro inesperado ao tentar buscar a meta:", err);
-    showToast("Ocorreu um erro inesperado.", "Error");
+  } catch (error) {
+    console.error("Erro ao buscar a meta:", error);
   } finally {
     loading.value = false;
   }
