@@ -56,6 +56,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: "guest",
+});
+
 import { useAuthStore, type User } from "~/stores/auth";
 
 const userEmail = ref<string>("");
